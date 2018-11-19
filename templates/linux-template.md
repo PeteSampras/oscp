@@ -9,10 +9,10 @@
 - Windows domain:
 
 Services and ports:
+
 INSERTTCPSCAN
 
 INSERTUDPSCAN
-
 
 INSERTDIGSCAN
 ## Recon
