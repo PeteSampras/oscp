@@ -1,5 +1,5 @@
 ## Info-sheet
-
+- IP Address: INSERTIPADDRESS
 - DNS-Domain name:
 - Host name:
 - OS:
@@ -11,6 +11,10 @@
 Services and ports:
 INSERTTCPSCAN
 
+INSERTUDPSCAN
+
+
+INSERTDIGSCAN
 ## Recon
 
 
@@ -46,6 +50,7 @@ nmap INSERTIPADDRESS -p- -A -T4 -sC
 
 INSERTFTPTEST
 
+INSERTFTPSCAN
 
 ```
 nmap --script=ftp-anon,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221,tftp-enum -p 21 INSERTIPADDRESS
@@ -59,6 +64,8 @@ nmap --script=ftp-anon,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-
 - If you have usernames test login with username:username
 
 INSERTSSHCONNECT
+
+INSERTSSHSCAN
 
 ```
 nc INSERTIPADDRESS 22
@@ -86,6 +93,8 @@ nmap --script=smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve
 ### Port 69 - UDP - TFTP
 
 This is used for tftp-server.
+
+INSERTUDP69SCAN
 
 
 ### Port 110 - Pop3
