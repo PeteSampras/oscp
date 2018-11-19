@@ -37,7 +37,6 @@ def multProc(targetin, scanip, port):
     return
 
 def connect_to_port(ip_address, port, service):
-
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((ip_address, int(port)))
     banner = s.recv(1024)
@@ -64,33 +63,46 @@ def connect_to_port(ip_address, port, service):
         write_to_file(ip_address, "pop3-connect", total_communication)
     s.close()
 
+def replace_file(path,this,that):
+    for line in fileinput.input(path,inplace=True):        
+        print line.replace(this,that),
 
 
-
-def write_to_file(ip_address, enum_type, data):
-
+def write_to_file(ip_address,enum_type,data):
+    ip_address = ip_address.strip()
     file_path_linux = '../reports/%s/mapping-linux.md' % (ip_address)
     file_path_windows = '../reports/%s/mapping-windows.md' % (ip_address)
     paths = [file_path_linux, file_path_windows]
     print bcolors.OKGREEN + "INFO: Writing " + enum_type + " to template files:\n " + file_path_linux + "   \n" + file_path_windows + bcolors.ENDC
-
     for path in paths:
         if enum_type == "portscan":
-            subprocess.check_output("replace INSERTTCPSCAN \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTTCPSCAN",data)
+            # subprocess.check_output("replace INSERTTCPSCAN \"" + data + "\"  -- " + path, shell=True)
+        if enum_type == "udpscan":
+            replace_file(path,"INSERTUDPSCAN",data)
+            # subprocess.check_output("replace INSERTTCPSCAN \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "dirb":
-            subprocess.check_output("replace INSERTDIRBSCAN \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTDIRBSCAN",data)
+            #subprocess.check_output("replace INSERTDIRBSCAN \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "nikto":
-            subprocess.check_output("replace INSERTNIKTOSCAN \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTNIKTOSCAN",data)
+            #subprocess.check_output("replace INSERTNIKTOSCAN \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "ftp-connect":
-            subprocess.check_output("replace INSERTFTPTEST \"" + data + "\"  -- " + path, shell=True)
+            print "DEBUG FTP enum type"
+            replace_file(path,"INSERTFTPTEST",data)
+            #subprocess.check_output("replace INSERTFTPTEST \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "smtp-connect":
-            subprocess.check_output("replace INSERTSMTPCONNECT \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTSMTPCONNECT",data)
+            #subprocess.check_output("replace INSERTSMTPCONNECT \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "ssh-connect":
-            subprocess.check_output("replace INSERTSSHCONNECT \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTSSHCONNECT",data)
+            #subprocess.check_output("replace INSERTSSHCONNECT \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "pop3-connect":
-            subprocess.check_output("replace INSERTPOP3CONNECT \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTPOP3CONNECT",data)
+            #subprocess.check_output("replace INSERTPOP3CONNECT \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "curl":
-            subprocess.check_output("replace INSERTCURLHEADER \"" + data + "\"  -- " + path, shell=True)
+            replace_file(path,"INSERTCURLHEADER",data)
+            #subprocess.check_output("replace INSERTCURLHEADER \"" + data + "\"  -- " + path, shell=True)
     return
 
 
@@ -204,19 +216,24 @@ def ftpEnum(ip_address, port):
     print bcolors.HEADER + FTPSCAN + bcolors.ENDC
     results_ftp = subprocess.check_output(FTPSCAN, shell=True)
     print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC
-    print results_ftp
+    # print results_ftp
+    print "DEBUG START FTP"
+    write_to_file(ip_address, "ftp-connect", results_ftp)
+    print "DEBUG STOP FTP"
     return
 
 def udpScan(ip_address):
     print bcolors.HEADER + "INFO: Detected UDP on " + ip_address + bcolors.ENDC
-    UDPSCAN = "nmap -Pn -A -sC -sU -T 3 --top-ports 200 -oN '../reports/%s/udp_%s.nmap' %s"  % (ip_address, ip_address, ip_address)
+    UDPSCAN = "nmap -Pn -A -sC -sU -T 5 --top-ports 150 -oN '../reports/%s/udp_%s.nmap' %s"  % (ip_address, ip_address, ip_address)
     print bcolors.HEADER + UDPSCAN + bcolors.ENDC
     udpscan_results = subprocess.check_output(UDPSCAN, shell=True)
     print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with UDP-Nmap scan for " + ip_address + bcolors.ENDC
     print udpscan_results
-    UNICORNSCAN = "unicornscan -mU -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
-    unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC
+    write_to_file(ip_address,"udpscan",udpscan_results)
+    #UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
+    #unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
+    #print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC
+    return
 
 def sshScan(ip_address, port):
     print bcolors.HEADER + "INFO: Detected SSH on " + ip_address + ":" + port  + bcolors.ENDC
@@ -226,6 +243,7 @@ def sshScan(ip_address, port):
     results_ssh = subprocess.check_output(SSHSCAN, shell=True)
     print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SSH-Nmap-scan for " + ip_address + bcolors.ENDC
     print results_ssh
+    write_to_file(ip_address, "ssh-connect", results_ssh)
     return
 
 def pop3Scan(ip_address, port):
@@ -243,17 +261,23 @@ def nmapScan(ip_address):
     ip_address = ip_address.strip()
     print bcolors.OKGREEN + "INFO: Running general TCP/UDP nmap scans for " + ip_address + bcolors.ENDC
 
-
-    TCPSCAN = "nmap -sV -O %s -oN '../reports/%s/%s.nmap'"  % (ip_address, ip_address, ip_address)
+    # FULL SCAN
+    TCPSCAN = "nmap -sV -O -p- %s -oN '../reports/%s/%s.nmap'"  % (ip_address, ip_address, ip_address)
+    # PARTIAL SCAN
+    #TCPSCAN = "nmap -sV -O %s -oN '../reports/%s/%s.nmap'"  % (ip_address, ip_address, ip_address)
     print bcolors.HEADER + TCPSCAN + bcolors.ENDC
     results = subprocess.check_output(TCPSCAN, shell=True)
     print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with BASIC Nmap-scan for " + ip_address + bcolors.ENDC
     print results
-
-    p = multiprocessing.Process(target=udpScan, args=(scanip,))
-    p.start()
-
     write_to_file(ip_address, "portscan", results)
+
+    # UDP SCAN GOES HERE BUT LETS COMMENT IT OUT FOR NOW AND MOVE IT BELOW LATER
+    #p = multiprocessing.Process(target=udpScan, args=(ip_address,))
+    #p = multiprocessing.Process(target=udpScan, args=(scanip,))
+    #p.start()
+    # multi process is screwing up. let's do it single core.
+    # udpScan(ip_address)
+    
     lines = results.split("\n")
     serv_dict = {}
     for line in lines:
@@ -274,8 +298,6 @@ def nmapScan(ip_address):
             ports.append(port)
             # print ports
             serv_dict[service] = ports # add service to the dictionary along with the associated port(2)
-
-
 
    # go through the service dictionary to call additional targeted enumeration functions
     for serv in serv_dict:
