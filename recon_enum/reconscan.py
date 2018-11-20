@@ -88,9 +88,10 @@ def write_to_file(ip_address,enum_type,data):
             replace_file(path,"INSERTNIKTOSCAN",data)
             #subprocess.check_output("replace INSERTNIKTOSCAN \"" + data + "\"  -- " + path, shell=True)
         if enum_type == "ftp-connect":
-            print "DEBUG FTP enum type"
             replace_file(path,"INSERTFTPTEST",data)
             #subprocess.check_output("replace INSERTFTPTEST \"" + data + "\"  -- " + path, shell=True)
+        if enum_type == "ftp-scan":
+            replace_file(path,"INSERTFTPSCAN",data)    
         if enum_type == "smtp-connect":
             replace_file(path,"INSERTSMTPCONNECT",data)
             #subprocess.check_output("replace INSERTSMTPCONNECT \"" + data + "\"  -- " + path, shell=True)
@@ -217,9 +218,7 @@ def ftpEnum(ip_address, port):
     results_ftp = subprocess.check_output(FTPSCAN, shell=True)
     print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC
     # print results_ftp
-    print "DEBUG START FTP"
-    write_to_file(ip_address, "ftp-connect", results_ftp)
-    print "DEBUG STOP FTP"
+    write_to_file(ip_address, "ftp-scan", results_ftp)
     return
 
 def udpScan(ip_address):
