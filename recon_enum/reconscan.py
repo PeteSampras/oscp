@@ -67,7 +67,6 @@ def replace_file(path,this,that):
     for line in fileinput.input(path,inplace=True):        
         print line.replace(this,that),
 
-
 def write_to_file(ip_address,enum_type,data):
     ip_address = ip_address.strip()
     file_path_linux = '../reports/%s/mapping-linux.md' % (ip_address)
@@ -106,8 +105,6 @@ def write_to_file(ip_address,enum_type,data):
             #subprocess.check_output("replace INSERTCURLHEADER \"" + data + "\"  -- " + path, shell=True)
     return
 
-
-
 def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt, /usr/share/wordlist/dirb/vulns/cgis.txt"):
     print bcolors.HEADER + "INFO: Starting dirb scan for " + ip_address + bcolors.ENDC
     DIRBSCAN = "dirb %s://%s:%s %s -o ../reports/%s/dirb-%s.txt -r" % (url_start, ip_address, port, ip_address, ip_address, wordlist)
@@ -118,16 +115,16 @@ def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt
     write_to_file(ip_address, "dirb", results_dirb)
     return
 
-def nikto(ip_address, port, url_start):
-    print bcolors.HEADER + "INFO: Starting nikto scan for " + ip_address + bcolors.ENDC
-    NIKTOSCAN = "nikto -h %s://%s -o ../reports/%s/nikto-%s-%s.txt" % (url_start, ip_address, ip_address, url_start, ip_address)
-    print bcolors.HEADER + NIKTOSCAN + bcolors.ENDC
-    results_nikto = subprocess.check_output(NIKTOSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with NIKTO-scan for " + ip_address + bcolors.ENDC
-    print results_nikto
-    write_to_file(ip_address, "nikto", results_nikto)
+def ftpEnum(ip_address, port):
+    print bcolors.HEADER + "INFO: Detected ftp on " + ip_address + ":" + port  + bcolors.ENDC
+    connect_to_port(ip_address, port, "ftp")
+    FTPSCAN = "nmap -sV -Pn -p %s --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oN '../reports/%s/ftp_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
+    print bcolors.HEADER + FTPSCAN + bcolors.ENDC
+    results_ftp = subprocess.check_output(FTPSCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC
+    # print results_ftp
+    write_to_file(ip_address, "ftp-scan", results_ftp)
     return
-
 
 def httpEnum(ip_address, port):
     print bcolors.HEADER + "INFO: Detected http on " + ip_address + ":" + port + bcolors.ENDC
@@ -182,79 +179,15 @@ def mssqlEnum(ip_address, port):
     print mssql_results
     return
 
-
-def smtpEnum(ip_address, port):
-    print bcolors.HEADER + "INFO: Detected smtp on " + ip_address + ":" + port  + bcolors.ENDC
-    connect_to_port(ip_address, port, "smtp")
-    SMTPSCAN = "nmap -sV -Pn -p %s --script=smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764 %s -oN ../reports/%s/smtp_%s.nmap" % (port, ip_address, ip_address, ip_address)
-    print bcolors.HEADER + SMTPSCAN + bcolors.ENDC
-    smtp_results = subprocess.check_output(SMTPSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMTP-scan for " + ip_address + bcolors.ENDC
-    print smtp_results
-    # write_to_file(ip_address, "smtp", smtp_results)
+def nikto(ip_address, port, url_start):
+    print bcolors.HEADER + "INFO: Starting nikto scan for " + ip_address + bcolors.ENDC
+    NIKTOSCAN = "nikto -h %s://%s -o ../reports/%s/nikto-%s-%s.txt" % (url_start, ip_address, ip_address, url_start, ip_address)
+    print bcolors.HEADER + NIKTOSCAN + bcolors.ENDC
+    results_nikto = subprocess.check_output(NIKTOSCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with NIKTO-scan for " + ip_address + bcolors.ENDC
+    print results_nikto
+    write_to_file(ip_address, "nikto", results_nikto)
     return
-
-def smbNmap(ip_address, port):
-    print "INFO: Detected SMB on " + ip_address + ":" + port
-    smbNmap = "nmap --script=smb-enum-shares,smb-ls,smb-enum-users,smb-mbenum,smb-os-discovery,smb-security-mode,smb-vuln-cve2009-3103,smb-vuln-ms06-025,smb-vuln-ms07-029,smb-vuln-ms08-067,smb-vuln-ms10-054,smb-vuln-ms10-061,smb-vuln-regsvc-dos %s -oN ../reports/%s/smb_%s.nmap" % (ip_address, ip_address, ip_address)
-    smbNmap_results = subprocess.check_output(smbNmap, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMB-Nmap-scan for " + ip_address + bcolors.ENDC
-    print smbNmap_results
-    return
-
-def smbEnum(ip_address, port):
-    print "INFO: Detected SMB on " + ip_address + ":" + port
-    enum4linux = "enum4linux -a %s > ../reports/%s/enum4linux_%s 2>/dev/null" % (ip_address, ip_address, ip_address)
-    enum4linux_results = subprocess.check_output(enum4linux, shell=True)
-    print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with ENUM4LINUX-Nmap-scan for " + ip_address + bcolors.ENDC
-    print enum4linux_results
-    return
-
-def ftpEnum(ip_address, port):
-    print bcolors.HEADER + "INFO: Detected ftp on " + ip_address + ":" + port  + bcolors.ENDC
-    connect_to_port(ip_address, port, "ftp")
-    FTPSCAN = "nmap -sV -Pn -p %s --script=ftp-anon,ftp-bounce,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221 -oN '../reports/%s/ftp_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
-    print bcolors.HEADER + FTPSCAN + bcolors.ENDC
-    results_ftp = subprocess.check_output(FTPSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC
-    # print results_ftp
-    write_to_file(ip_address, "ftp-scan", results_ftp)
-    return
-
-def udpScan(ip_address):
-    print bcolors.HEADER + "INFO: Detected UDP on " + ip_address + bcolors.ENDC
-    UDPSCAN = "nmap -Pn -A -sC -sU -T 5 --top-ports 150 -oN '../reports/%s/udp_%s.nmap' %s"  % (ip_address, ip_address, ip_address)
-    print bcolors.HEADER + UDPSCAN + bcolors.ENDC
-    udpscan_results = subprocess.check_output(UDPSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with UDP-Nmap scan for " + ip_address + bcolors.ENDC
-    print udpscan_results
-    write_to_file(ip_address,"udpscan",udpscan_results)
-    #UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
-    #unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
-    #print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC
-    return
-
-def sshScan(ip_address, port):
-    print bcolors.HEADER + "INFO: Detected SSH on " + ip_address + ":" + port  + bcolors.ENDC
-    connect_to_port(ip_address, port, "ssh")
-    SSHSCAN = "nmap -sV -Pn -p %s --script=ssh-auth-methods,ssh-hostkey,ssh-run,sshv1 -oN '../reports/%s/ssh_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
-    print bcolors.HEADER + SSHSCAN + bcolors.ENDC
-    results_ssh = subprocess.check_output(SSHSCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SSH-Nmap-scan for " + ip_address + bcolors.ENDC
-    print results_ssh
-    write_to_file(ip_address, "ssh-connect", results_ssh)
-    return
-
-def pop3Scan(ip_address, port):
-    print bcolors.HEADER + "INFO: Detected POP3 on " + ip_address + ":" + port  + bcolors.ENDC
-    connect_to_port(ip_address, port, "pop3")
-    POP3SCAN = "nmap -sV -Pn -p %s --script=pop3-brute,pop3-capabilities,pop3-ntlm-info -oN '../reports/%s/pop3_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
-    print bcolors.HEADER + SSHSCAN + bcolors.ENDC
-    results_pop3 = subprocess.check_output(POP3SCAN, shell=True)
-    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with POP3-Nmap-scan for " + ip_address + bcolors.ENDC
-    print results_pop3
-    return
-
 
 def nmapScan(ip_address):
     ip_address = ip_address.strip()
@@ -337,6 +270,67 @@ def nmapScan(ip_address):
 
     return
 
+def pop3Scan(ip_address, port):
+    print bcolors.HEADER + "INFO: Detected POP3 on " + ip_address + ":" + port  + bcolors.ENDC
+    connect_to_port(ip_address, port, "pop3")
+    POP3SCAN = "nmap -sV -Pn -p %s --script=pop3-brute,pop3-capabilities,pop3-ntlm-info -oN '../reports/%s/pop3_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
+    print bcolors.HEADER + SSHSCAN + bcolors.ENDC
+    results_pop3 = subprocess.check_output(POP3SCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with POP3-Nmap-scan for " + ip_address + bcolors.ENDC
+    print results_pop3
+    return
+
+def smbNmap(ip_address, port):
+    print "INFO: Detected SMB on " + ip_address + ":" + port
+    smbNmap = "nmap --script=smb-enum-shares,smb-ls,smb-enum-users,smb-mbenum,smb-os-discovery,smb-security-mode,smb-vuln-cve2009-3103,smb-vuln-ms06-025,smb-vuln-ms07-029,smb-vuln-ms08-067,smb-vuln-ms10-054,smb-vuln-ms10-061,smb-vuln-regsvc-dos %s -oN ../reports/%s/smb_%s.nmap" % (ip_address, ip_address, ip_address)
+    smbNmap_results = subprocess.check_output(smbNmap, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMB-Nmap-scan for " + ip_address + bcolors.ENDC
+    print smbNmap_results
+    return
+
+def smbEnum(ip_address, port):
+    print "INFO: Detected SMB on " + ip_address + ":" + port
+    enum4linux = "enum4linux -a %s > ../reports/%s/enum4linux_%s 2>/dev/null" % (ip_address, ip_address, ip_address)
+    enum4linux_results = subprocess.check_output(enum4linux, shell=True)
+    print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with ENUM4LINUX-Nmap-scan for " + ip_address + bcolors.ENDC
+    print enum4linux_results
+    return
+
+def smtpEnum(ip_address, port):
+    print bcolors.HEADER + "INFO: Detected smtp on " + ip_address + ":" + port  + bcolors.ENDC
+    connect_to_port(ip_address, port, "smtp")
+    SMTPSCAN = "nmap -sV -Pn -p %s --script=smtp-commands,smtp-enum-users,smtp-vuln-cve2010-4344,smtp-vuln-cve2011-1720,smtp-vuln-cve2011-1764 %s -oN ../reports/%s/smtp_%s.nmap" % (port, ip_address, ip_address, ip_address)
+    print bcolors.HEADER + SMTPSCAN + bcolors.ENDC
+    smtp_results = subprocess.check_output(SMTPSCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMTP-scan for " + ip_address + bcolors.ENDC
+    print smtp_results
+    # write_to_file(ip_address, "smtp", smtp_results)
+    return
+
+def sshScan(ip_address, port):
+    print bcolors.HEADER + "INFO: Detected SSH on " + ip_address + ":" + port  + bcolors.ENDC
+    connect_to_port(ip_address, port, "ssh")
+    SSHSCAN = "nmap -sV -Pn -p %s --script=ssh-auth-methods,ssh-hostkey,ssh-run,sshv1 -oN '../reports/%s/ssh_%s.nmap' %s" % (port, ip_address, ip_address, ip_address)
+    print bcolors.HEADER + SSHSCAN + bcolors.ENDC
+    results_ssh = subprocess.check_output(SSHSCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SSH-Nmap-scan for " + ip_address + bcolors.ENDC
+    print results_ssh
+    write_to_file(ip_address, "ssh-connect", results_ssh)
+    return
+
+def udpScan(ip_address):
+    print bcolors.HEADER + "INFO: Detected UDP on " + ip_address + bcolors.ENDC
+    UDPSCAN = "nmap -Pn -A -sC -sU -T 5 --top-ports 150 -oN '../reports/%s/udp_%s.nmap' %s"  % (ip_address, ip_address, ip_address)
+    print bcolors.HEADER + UDPSCAN + bcolors.ENDC
+    udpscan_results = subprocess.check_output(UDPSCAN, shell=True)
+    print bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with UDP-Nmap scan for " + ip_address + bcolors.ENDC
+    print udpscan_results
+    write_to_file(ip_address,"udpscan",udpscan_results)
+    #UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
+    #unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
+    #print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC
+    return
+
 
 print bcolors.HEADER
 print "------------------------------------------------------------"
@@ -381,6 +375,6 @@ if __name__=='__main__':
             subprocess.check_output("sed -i -e 's/INSERTIPADDRESS/" + scanip + "/g' ../reports/" + scanip + "/mapping-linux.md", shell=True)
 
 
-
+        # start with nmap
         p = multiprocessing.Process(target=nmapScan, args=(scanip,))
         p.start()
