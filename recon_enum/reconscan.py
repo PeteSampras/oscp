@@ -65,7 +65,7 @@ def connect_to_port(ip_address, port, service):
 
 def replace_file(path,this,that):
     for line in fileinput.input(path,inplace=True):        
-        print(line.replace(this,that).decode('UTF-8').strip())
+        print(line.replace(this,that.decode('UTF-8').strip()),end="")
 
 def write_to_file(ip_address,enum_type,data):
     ip_address = ip_address.strip()
@@ -76,7 +76,8 @@ def write_to_file(ip_address,enum_type,data):
     for path in paths:
         if enum_type == "portscan":
             replace_file(path,"INSERTTCPSCAN",data)
-            # subprocess.check_output("replace INSERTTCPSCAN \"" + data + "\"  -- " + path, shell=True)
+            #new = data.decode('UTF-8').strip()
+            #subprocess.check_output("replace INSERTTCPSCAN \"" + str(data) + "\"  -- " + path, shell=True)
         if enum_type == "udpscan":
             replace_file(path,"INSERTUDPSCAN",data)
             # subprocess.check_output("replace INSERTTCPSCAN \"" + data + "\"  -- " + path, shell=True)
@@ -111,7 +112,7 @@ def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt
     print(bcolors.HEADER + DIRBSCAN + bcolors.ENDC)
     results_dirb = subprocess.check_output(DIRBSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with dirb scan for " + ip_address + bcolors.ENDC)
-    print(results_dirb)
+    print(results_dirb.decode())
     write_to_file(ip_address, "dirb", results_dirb)
     return
 
@@ -144,7 +145,7 @@ def httpEnum(ip_address, port):
 
     http_results = subprocess.check_output(HTTPSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with HTTP-SCAN for " + ip_address + bcolors.ENDC)
-    print(http_results)
+    print(http_results.decode())
 
     return
 
@@ -166,7 +167,7 @@ def httpsEnum(ip_address, port):
     print(bcolors.HEADER + HTTPSCANS + bcolors.ENDC)
     https_results = subprocess.check_output(HTTPSCANS, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with HTTPS-scan for " + ip_address + bcolors.ENDC)
-    print(https_results)
+    print(https_results.decode())
     return
 
 def mssqlEnum(ip_address, port):
@@ -176,7 +177,7 @@ def mssqlEnum(ip_address, port):
     print(bcolors.HEADER + MSSQLSCAN + bcolors.ENDC)
     mssql_results = subprocess.check_output(MSSQLSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with MSSQL-scan for " + ip_address + bcolors.ENDC)
-    print(mssql_results)
+    print(mssql_results.decode())
     return
 
 def nikto(ip_address, port, url_start):
@@ -185,7 +186,7 @@ def nikto(ip_address, port, url_start):
     print(bcolors.HEADER + NIKTOSCAN + bcolors.ENDC)
     results_nikto = subprocess.check_output(NIKTOSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with NIKTO-scan for " + ip_address + bcolors.ENDC)
-    print(results_nikto)
+    print(results_nikto.decode())
     write_to_file(ip_address, "nikto", results_nikto)
     return
 
@@ -200,7 +201,7 @@ def nmapScan(ip_address):
     print(bcolors.HEADER + TCPSCAN + bcolors.ENDC)
     results = subprocess.check_output(TCPSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with BASIC Nmap-scan for " + ip_address + bcolors.ENDC)
-    print(results)
+    print(results.decode())
     write_to_file(ip_address, "portscan", results)
 
     # UDP SCAN GOES HERE BUT LETS COMMENT IT OUT FOR NOW AND MOVE IT BELOW LATER
@@ -209,16 +210,16 @@ def nmapScan(ip_address):
     #p.start()
     # multi process is screwing up. let's do it single core.
     # udpScan(ip_address)
-    
-    lines = results.split("\n")
+
+    lines = results.split(b"\n")
     serv_dict = {}
     for line in lines:
         ports = []
-        line = line.strip()
+        line = str(line.decode('UTF-8').strip())
         if ("tcp" in line) and ("open" in line) and not ("Discovered" in line):
             # print line
             while "  " in line:
-                line = line.replace("  ", " ");
+                line = line.replace("  ", " ")
             linesplit= line.split(" ")
             service = linesplit[2] # grab the service name
 
@@ -277,7 +278,7 @@ def pop3Scan(ip_address, port):
     print(bcolors.HEADER + SSHSCAN + bcolors.ENDC)
     results_pop3 = subprocess.check_output(POP3SCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with POP3-Nmap-scan for " + ip_address + bcolors.ENDC)
-    print(results_pop3)
+    print(results_pop3.decode())
     return
 
 def smbNmap(ip_address, port):
@@ -285,7 +286,7 @@ def smbNmap(ip_address, port):
     smbNmap = "nmap --script=smb-enum-shares,smb-ls,smb-enum-users,smb-mbenum,smb-os-discovery,smb-security-mode,smb-vuln-cve2009-3103,smb-vuln-ms06-025,smb-vuln-ms07-029,smb-vuln-ms08-067,smb-vuln-ms10-054,smb-vuln-ms10-061,smb-vuln-regsvc-dos %s -oN ../reports/%s/smb_%s.nmap" % (ip_address, ip_address, ip_address)
     smbNmap_results = subprocess.check_output(smbNmap, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMB-Nmap-scan for " + ip_address + bcolors.ENDC)
-    print(smbNmap_results)
+    print(smbNmap_results.decode())
     return
 
 def smbEnum(ip_address, port):
@@ -293,7 +294,7 @@ def smbEnum(ip_address, port):
     enum4linux = "enum4linux -a %s > ../reports/%s/enum4linux_%s 2>/dev/null" % (ip_address, ip_address, ip_address)
     enum4linux_results = subprocess.check_output(enum4linux, shell=True)
     print(bcolors.OKGREEN + "INFO: CHECK FILE - Finished with ENUM4LINUX-Nmap-scan for " + ip_address + bcolors.ENDC)
-    print(enum4linux_results)
+    print(enum4linux_results.decode())
     return
 
 def smtpEnum(ip_address, port):
@@ -303,7 +304,7 @@ def smtpEnum(ip_address, port):
     print(bcolors.HEADER + SMTPSCAN + bcolors.ENDC)
     smtp_results = subprocess.check_output(SMTPSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SMTP-scan for " + ip_address + bcolors.ENDC)
-    print(smtp_results)
+    print(smtp_results.decode())
     # write_to_file(ip_address, "smtp", smtp_results)
     return
 
@@ -314,7 +315,7 @@ def sshScan(ip_address, port):
     print(bcolors.HEADER + SSHSCAN + bcolors.ENDC)
     results_ssh = subprocess.check_output(SSHSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with SSH-Nmap-scan for " + ip_address + bcolors.ENDC)
-    print(results_ssh)
+    print(results_ssh.decode())
     write_to_file(ip_address, "ssh-connect", results_ssh)
     return
 
@@ -324,7 +325,7 @@ def udpScan(ip_address):
     print(bcolors.HEADER + UDPSCAN + bcolors.ENDC)
     udpscan_results = subprocess.check_output(UDPSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with UDP-Nmap scan for " + ip_address + bcolors.ENDC)
-    print(udpscan_results)
+    print(udpscan_results.decode())
     write_to_file(ip_address,"udpscan",udpscan_results)
     #UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
     #unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
