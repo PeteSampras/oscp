@@ -65,7 +65,7 @@ def connect_to_port(ip_address, port, service):
 
 def replace_file(path,this,that):
     for line in fileinput.input(path,inplace=True):        
-        print(line.replace(this,that), end=' ')
+        print(line.replace(this,that).decode('UTF-8').strip())
 
 def write_to_file(ip_address,enum_type,data):
     ip_address = ip_address.strip()
