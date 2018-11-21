@@ -63,9 +63,11 @@ nmap --script=ftp-anon,ftp-libopie,ftp-proftpd-backdoor,ftp-vsftpd-backdoor,ftp-
 - Takes-password:
 - If you have usernames test login with username:username
 
+INSERTSSHBANNER
+
 INSERTSSHCONNECT
 
-INSERTSSHSCAN
+
 
 ```
 nc INSERTIPADDRESS 22

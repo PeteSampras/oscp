@@ -42,18 +42,22 @@ def connect_to_port(ip_address, port, service):
     banner = s.recv(1024)
 
     if service == "ftp":
-        s.send("USER anonymous\r\n")
+        m="USER anonymous\r\n"
+        byt=m.encode()
+        s.send(byt)
         user = s.recv(1024)
-        s.send("PASS anonymous\r\n")
+        m="PASS anonymous\r\n"
+        byt=m.encode()
+        s.send(byt)
         password = s.recv(1024)
-        total_communication = banner + "\r\n" + user + "\r\n" + password
+        total_communication = str(banner) + "\r\n" + str(user.decode()) + "\r\n" + str(password.decode())
         write_to_file(ip_address, "ftp-connect", total_communication)
     elif service == "smtp":
         total_communication = banner + "\r\n"
         write_to_file(ip_address, "smtp-connect", total_communication)
     elif service == "ssh":
         total_communication = banner
-        write_to_file(ip_address, "ssh-connect", total_communication)
+        write_to_file(ip_address, "ssh-banner", total_communication)
     elif service == "pop3":
         s.send("USER root\r\n")
         user = s.recv(1024)
@@ -64,8 +68,11 @@ def connect_to_port(ip_address, port, service):
     s.close()
 
 def replace_file(path,this,that):
-    for line in fileinput.input(path,inplace=True):        
-        print(line.replace(this,that.decode('UTF-8').strip()),end="")
+    for line in fileinput.input(path,inplace=True):
+        if isinstance(this,str):
+            print(line.replace(this,str(that).strip()),end="")        
+        else:
+            print(line.replace(this,str(that).decode('UTF-8').strip()),end="")
 
 def write_to_file(ip_address,enum_type,data):
     ip_address = ip_address.strip()
@@ -95,6 +102,8 @@ def write_to_file(ip_address,enum_type,data):
         if enum_type == "smtp-connect":
             replace_file(path,"INSERTSMTPCONNECT",data)
             #subprocess.check_output("replace INSERTSMTPCONNECT \"" + data + "\"  -- " + path, shell=True)
+        if enum_type == "ssh-banner":
+            replace_file(path,"INSERTSSHBANNER",data)
         if enum_type == "ssh-connect":
             replace_file(path,"INSERTSSHCONNECT",data)
             #subprocess.check_output("replace INSERTSSHCONNECT \"" + data + "\"  -- " + path, shell=True)
@@ -264,7 +273,10 @@ def nmapScan(ip_address):
             for port in ports:
                 port = port.split("/")[0]
                 multProc(sshScan, ip_address, port)
-        elif "snmp" in serv:
+    return
+########## temp cutoff because this is deleting the .md file contents
+    def thisclass(serv): #temp delete, change if to elif on line below.
+        if "snmp" in serv:
             for port in ports:
                 port = port.split("/")[0]
                 multProc(snmpEnum, ip_address, port)
