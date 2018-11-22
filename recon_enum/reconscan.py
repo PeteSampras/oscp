@@ -159,10 +159,10 @@ def ftpEnum(ip_address, port):
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC)
     # print results_ftp
     write_to_file(ip_address, "ftp-scan", results_ftp)
-    FTPGET = "wget ftp://%s:21 -o ../reports/%s/ftp_%s.nmap' %s" % (ip_address, port, ip_address, ip_address, ip_address)
-    print(bcolors.HEADER + FTPGET + bcolors.ENDC)
-    results_ftp = subprocess.check_output(FTPSCAN, shell=True)
-    print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-wget for " + ip_address + bcolors.ENDC)
+    #FTPGET = "wget ftp://%s:21 -o ../reports/%s/ftp_%s.nmap' %s" % (ip_address, port, ip_address, ip_address, ip_address)
+    #print(bcolors.HEADER + FTPGET + bcolors.ENDC)
+    #results_ftp = subprocess.check_output(FTPSCAN, shell=True)
+    #print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-wget for " + ip_address + bcolors.ENDC)
     return
 
 def httpEnum(ip_address, port):
