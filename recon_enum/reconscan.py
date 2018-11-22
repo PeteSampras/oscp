@@ -50,7 +50,15 @@ def connect_to_port(ip_address, port, service):
         byt=m.encode()
         s.send(byt)
         password = s.recv(1024)
-        total_communication = str(banner) + "\r\n" + str(user.decode()) + "\r\n" + str(password.decode())
+        m="STAT\r\n"
+        byt=m.encode()
+        s.send(byt)
+        stat = s.recv(1024)
+        m="SYST\r\n"
+        byt=m.encode()
+        s.send(byt)
+        syst = s.recv(1024)
+        total_communication = str(banner) + "\r\n" + str(user.decode()) + "\r\n" + str(password.decode())+ "\r\n" + str(stat.decode())+ "\r\n" + str(syst.decode())
         write_to_file(ip_address, "ftp-banner", total_communication)
     elif service == "smtp":
         total_communication = banner + "\r\n"
@@ -95,6 +103,8 @@ def write_to_file(ip_address,enum_type,data):
         if enum_type == "dirb":
             replace_file(path,"INSERTDIRBSCAN",data)
             #subprocess.check_output("replace INSERTDIRBSCAN \"" + data + "\"  -- " + path, shell=True)
+        if enum_type=="dig":
+            replace_file(path,"INSERTDIGSCAN",data)
         if enum_type == "nikto":
             replace_file(path,"INSERTNIKTOSCAN",data)
             #subprocess.check_output("replace INSERTNIKTOSCAN \"" + data + "\"  -- " + path, shell=True)
@@ -129,6 +139,17 @@ def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt
     write_to_file(ip_address, "dirb", results_dirb)
     return
 
+def dig(ip_address):
+    print(bcolors.HEADER + "INFO: Starting dig scan for " + ip_address + bcolors.ENDC)
+    DIGSCAN = "dig " + ip_address
+    print(bcolors.HEADER + DIGSCAN + bcolors.ENDC)
+    results_dig = subprocess.check_output(DIGSCAN, shell=True)
+    print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with dig scan for " + ip_address + bcolors.ENDC)
+    this=results_dig.decode().replace("<<-","")
+    print(this)
+    write_to_file(ip_address, "dig", this)
+    return
+
 def ftpEnum(ip_address, port):
     print(bcolors.HEADER + "INFO: Detected ftp on " + ip_address + ":" + port  + bcolors.ENDC)
     connect_to_port(ip_address, port, "ftp")
@@ -138,6 +159,10 @@ def ftpEnum(ip_address, port):
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-Nmap-scan for " + ip_address + bcolors.ENDC)
     # print results_ftp
     write_to_file(ip_address, "ftp-scan", results_ftp)
+    FTPGET = "wget ftp://%s:21 -o ../reports/%s/ftp_%s.nmap' %s" % (ip_address, port, ip_address, ip_address, ip_address)
+    print(bcolors.HEADER + FTPGET + bcolors.ENDC)
+    results_ftp = subprocess.check_output(FTPSCAN, shell=True)
+    print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with FTP-wget for " + ip_address + bcolors.ENDC)
     return
 
 def httpEnum(ip_address, port):
@@ -389,7 +414,10 @@ if __name__=='__main__':
             subprocess.check_output("sed -i -e 's/INSERTIPADDRESS/" + scanip + "/g' ../reports/" + scanip + "/mapping-windows.md", shell=True)
             subprocess.check_output("sed -i -e 's/INSERTIPADDRESS/" + scanip + "/g' ../reports/" + scanip + "/mapping-linux.md", shell=True)
 
+        # do a dig first
+        p = multiprocessing.Process(target=dig, args=(scanip,))
+        p.start()
 
-        # start with nmap
+        # next use nmap
         p = multiprocessing.Process(target=nmapScan, args=(scanip,))
         p.start()

@@ -47,6 +47,8 @@ nmap INSERTIPADDRESS -p- -A -T4 -sC
 - FTP-Name:
 - FTP-version:
 - Anonymous login:
+- HELP shows available commands
+- https://en.wikipedia.org/wiki/List_of_FTP_commands to look up available commands
 
 INSERTFTPTEST
 
