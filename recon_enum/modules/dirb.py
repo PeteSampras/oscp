@@ -1,4 +1,4 @@
-from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
+from modules.imports import *
 
 def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt, /usr/share/wordlist/dirb/vulns/cgis.txt"):
     print(bcolors.HEADER + "INFO: Starting dirb scan for " + ip_address + bcolors.ENDC)

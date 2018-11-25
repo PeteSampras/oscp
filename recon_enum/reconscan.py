@@ -4,20 +4,24 @@ from modules.imports import *
 start = time.time()
 
 if __name__=='__main__':
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 2: # no args passed, print help and exit
         function = str(sys.argv[0])
         subprocess.call('python', '{}', '-h'.format(function))
         sys.exit()
 
     parser = argparse.ArgumentParser(prog='Recon scan',
+                                    add_help=False,
                                     description='A multi-process service scanner')
     # configuration
     configure_scan(parser)
  
-    
-    #     # do a dig first
-    #     p = multiprocessing.Process(target=dig, args=(scanip,))
-    #     p.start()
+    args= parser.parse_args()
+
+    # now we perform scans
+    for ip in args.ip:
+        # do a dig first regardless of mode
+        p = multiprocessing.Process(target=dig.dig, args=(ip,))
+        p.start()
 
     #     # next use nmap
     #     p = multiprocessing.Process(target=nmapScan, args=(scanip,))

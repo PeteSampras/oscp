@@ -9,9 +9,9 @@ import sys
 import socket
 import re
 import argparse
-from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
+from modules.utility_functions import multProc,write_to_file,bcolors, replace_file
 from modules.configure import configure_scan
-import modules.dig
+import modules.dig as dig
 import modules.dirb
 import modules.ftpEnum
 import modules.httpEnum

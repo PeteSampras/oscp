@@ -5,7 +5,9 @@ from modules.imports import *
 #from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
 
 
-# call function
+# call functions
+def dig_func(ip_addr):
+    dig(ip_addr)
 
 def configure_scan(parser):
     #parser = argparse.ArgumentParser(my_args)
@@ -14,18 +16,25 @@ def configure_scan(parser):
     print(parser.prog + " - " + parser.description)
     print("------------------------------------------------------------")
     print(bcolors.ENDC)
+    #add global parses
     parser.add_argument('--mode','-m',nargs=1,help='Specific mode you want to use: QUIET, ALL',
                         choices=['ALL','PASSIVE','STEALTH','ACTIVE'],
                         default="ALL")
     parser.add_argument('--ip','-i',nargs='*',help='List of IP address you want to target')
     parser.add_argument('--port','-p',nargs='?',help='List of ports you want to target')
 
+    # add subparses
+    subparsers=parser.add_subparsers(help='Module specific utilities')
+    parser_dig = subparsers.add_parser('dig',parents=[parser],help='Finds DNS information about a target')
+    parser_dig.set_defaults(func=dig_func)
+
+    # create folders for parses
     args= parser.parse_args()
     for each in args.ip:
         create_folder(args.ip)
     return
-    subparsers=parser.add_subparsers(help='Module specific utilities')
 
+    # run functions?
     # parser.func(args)
 
     # parser_pingsweep = subparsers.add_parser('pingsweep',help='Perform network pingsweep')
