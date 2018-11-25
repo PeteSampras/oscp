@@ -17,15 +17,25 @@ def configure_scan(parser):
     print("------------------------------------------------------------")
     print(bcolors.ENDC)
     #add global parses
-    parser.add_argument('--mode','-m',nargs=1,help='Specific mode you want to use: QUIET, ALL',
+    parser.add_argument('--mode','-m',
+                        nargs=1,
+                        help='Specific mode you want to use: QUIET, ALL',
                         choices=['ALL','PASSIVE','STEALTH','ACTIVE'],
                         default="ALL")
-    parser.add_argument('--ip','-i',nargs='*',help='List of IP address you want to target')
-    parser.add_argument('--port','-p',nargs='?',help='List of ports you want to target')
+    parser.add_argument('--ip','-i',
+                        nargs='*',
+                        help='List of IP address you want to target')
+    parser.add_argument('--port','-p',
+                        nargs='?',
+                        help='List of ports you want to target')
+    parser.add_argument('--udp','-u', action='store_true',
+                        help='Scan UDP?')
 
     # add subparses
     subparsers=parser.add_subparsers(help='Module specific utilities')
-    parser_dig = subparsers.add_parser('dig',parents=[parser],help='Finds DNS information about a target')
+    parser_dig = subparsers.add_parser('dig',
+                        parents=[parser],
+                        help='Finds DNS information about a target')
     parser_dig.set_defaults(func=dig_func)
 
     # create folders for parses

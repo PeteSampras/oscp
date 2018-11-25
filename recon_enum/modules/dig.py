@@ -9,4 +9,5 @@ def dig(ip_address):
     this=results_dig.decode().replace("<<-","")
     print(this)
     write_to_file(ip_address, "dig", this)
+    print(bcolors.OKGREEN + "INFO: nmap scan still in progress.. " + ip_address + bcolors.ENDC)
     return

@@ -1,3 +1,7 @@
+#from modules.imports import *
+import subprocess
+import modules.utility_functions
+
 def sshScan(ip_address, port):
     print(bcolors.HEADER + "INFO: Detected SSH on " + ip_address + ":" + port  + bcolors.ENDC)
     connect_to_port(ip_address, port, "ssh")

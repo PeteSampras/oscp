@@ -22,7 +22,24 @@ if __name__=='__main__':
         # do a dig first regardless of mode
         p = multiprocessing.Process(target=dig.dig, args=(ip,))
         p.start()
-
+        # now do the appropriate nmap for mode type
+        p = multiprocessing.Process(target=nmapScan.nmapScan, args=(ip,args.mode,args.udp,))
+        p.start()
+        # if args.mode=='STEALTH':
+        #     p = multiprocessing.Process(target=nmapScan.nmapScan, args=(ip,args.mode,args.udp,))
+        #     p.start()
+        #     break
+        # if args.mode=='PASSIVE':
+        #     nmapScan(ip,args.mode,args.udp)
+        #     break
+        # if args.mode=='ACTIVE':
+        #     nmapScan(ip,args.mode,args.udp)
+        #     break
+        # if args.mode=='ALL':
+        #     #nmapScan(ip,args.mode,args.udp)
+        #     p = multiprocessing.Process(target=nmapScan.nmapScan, args=(ip,args.mode,args.udp,))
+        #     p.start()
+        #     break
     #     # next use nmap
     #     p = multiprocessing.Process(target=nmapScan, args=(scanip,))
     #     p.start()

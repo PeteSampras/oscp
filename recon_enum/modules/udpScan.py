@@ -1,4 +1,6 @@
-from modules.imports import *
+#from modules.imports import *
+import subprocess
+import modules.utility_functions
 
 def udpScan(ip_address):
     print(bcolors.HEADER + "INFO: Detected UDP on " + ip_address + bcolors.ENDC)
@@ -8,7 +10,7 @@ def udpScan(ip_address):
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with UDP-Nmap scan for " + ip_address + bcolors.ENDC)
     print(udpscan_results.decode())
     write_to_file(ip_address,"udpscan",udpscan_results)
-    #UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
-    #unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
-    #print bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC
+    UNICORNSCAN = "unicornscan -mU -r 1000000 -I %s > ../reports/%s/unicorn_udp_%s.txt" % (ip_address, ip_address, ip_address)
+    unicornscan_results = subprocess.check_output(UNICORNSCAN, shell=True)
+    print(bcolors.OKGREEN + "INFO: CHECK FILE - Finished with UNICORNSCAN for " + ip_address + bcolors.ENDC)
     return
