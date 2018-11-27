@@ -1,5 +1,26 @@
 #!/usr/bin/env python
-from modules.imports import *
+import time
+import multiprocessing
+from multiprocessing import Process, Queue
+import subprocess
+import sys
+import argparse
+from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
+from modules.configure import configure_scan
+import modules.dig as dig
+import modules.dirb as dirb
+import modules.ftpEnum as ftpEnum
+import modules.httpEnum as httpEnum
+import modules.httpsEnum as httpsEnum
+import modules.mssqlEnum as mssqlEnum
+import modules.nikto as nikto
+import modules.nmapScan as nmapScan
+import modules.pop3scan as pop3scan
+import modules.smbEnum as smbEnum
+import modules.smbNmap as smbNmap
+import modules.smtpEnum as smtpEnum
+import modules.sshScan as sshScan
+import modules.udpScan as udpScan
 
 start = time.time()
 

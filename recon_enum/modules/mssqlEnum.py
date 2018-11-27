@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def mssqlEnum(ip_address, port):
     print(bcolors.HEADER + "INFO: Detected MS-SQL on " + ip_address + ":" + port + bcolors.ENDC)

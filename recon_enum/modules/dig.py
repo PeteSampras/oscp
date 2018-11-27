@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def dig(ip_address):
     print(bcolors.HEADER + "INFO: Starting dig scan for " + ip_address + bcolors.ENDC)

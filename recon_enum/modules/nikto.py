@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def nikto(ip_address, port, url_start):
     print(bcolors.HEADER + "INFO: Starting nikto scan for " + ip_address + bcolors.ENDC)

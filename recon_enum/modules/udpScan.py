@@ -1,6 +1,5 @@
-#from modules.imports import *
 import subprocess
-import modules.utility_functions
+from modules.utility_functions import *
 
 def udpScan(ip_address):
     print(bcolors.HEADER + "INFO: Detected UDP on " + ip_address + bcolors.ENDC)

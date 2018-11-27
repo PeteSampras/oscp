@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def pop3Scan(ip_address, port):
     print(bcolors.HEADER + "INFO: Detected POP3 on " + ip_address + ":" + port  + bcolors.ENDC)

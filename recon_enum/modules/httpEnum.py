@@ -1,4 +1,7 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
+import multiprocessing
+from multiprocessing import Process, Queue
 
 def httpEnum(ip_address, port):
     print(bcolors.HEADER + "INFO: Detected http on " + ip_address + ":" + port + bcolors.ENDC)

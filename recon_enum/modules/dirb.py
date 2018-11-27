@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def dirb(ip_address, port, url_start, wordlist="/usr/share/wordlist/dirb/big.txt, /usr/share/wordlist/dirb/vulns/cgis.txt"):
     print(bcolors.HEADER + "INFO: Starting dirb scan for " + ip_address + bcolors.ENDC)

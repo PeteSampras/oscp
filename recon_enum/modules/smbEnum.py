@@ -1,4 +1,5 @@
-from modules.imports import *
+import subprocess
+from modules.utility_functions import *
 
 def smbEnum(ip_address, port):
     print("INFO: Detected SMB on " + ip_address + ":" + port)

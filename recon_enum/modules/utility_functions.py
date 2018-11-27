@@ -1,4 +1,8 @@
-from modules.imports import *
+import socket
+import multiprocessing
+from multiprocessing import Process, Queue
+import fileinput
+import atexit
 
 class bcolors:
     HEADER = '\033[95m'

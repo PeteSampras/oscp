@@ -1,9 +1,9 @@
-from modules.imports import *
-#import argparse
-#import os
-#import subprocess
-#from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
-
+import argparse
+import os
+import subprocess
+from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
+import fileinput
+import atexit
 
 # call functions
 def dig_func(ip_addr):
