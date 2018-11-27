@@ -2,7 +2,6 @@ import subprocess
 from modules.utility_functions import *
 import multiprocessing
 from multiprocessing import Process, Queue, Manager
-import re
 
 def nmapScan(ip_address,scan_type,return_dict):
     ip_address = ip_address.strip()

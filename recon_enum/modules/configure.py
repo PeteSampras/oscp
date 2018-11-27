@@ -61,6 +61,7 @@ def create_folder(targets):
             subprocess.check_output("mkdir ../reports/" + scanip, shell=True)
             subprocess.check_output("mkdir ../reports/" + scanip + "/exploits", shell=True)
             subprocess.check_output("mkdir ../reports/" + scanip + "/privesc", shell=True)
+            subprocess.check_output("mkdir ../reports/" + scanip + "/ftp_files", shell=True)
             print(bcolors.OKGREEN + "INFO: Folder created here: " + "../reports/" + scanip + bcolors.ENDC)
             subprocess.check_output("cp ../templates/windows-template.md ../reports/" + scanip + "/mapping-windows.md", shell=True)
             subprocess.check_output("cp ../templates/linux-template.md ../reports/" + scanip + "/mapping-linux.md", shell=True)

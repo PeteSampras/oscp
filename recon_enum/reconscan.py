@@ -5,7 +5,8 @@ from multiprocessing import Process, Queue, Manager
 import subprocess
 import sys
 import argparse
-from modules.utility_functions import multProc as mp,write_to_file as w2f,bcolors, replace_file as rf
+import re
+from modules.utility_functions import multProc,write_to_file as w2f,bcolors, replace_file as rf
 from modules.configure import configure_scan
 import modules.dig as dig
 import modules.dirb as dirb
@@ -53,7 +54,7 @@ if __name__=='__main__':
         #p.start()
         # UDP SCAN GOES HERE BUT LETS COMMENT IT OUT FOR NOW AND MOVE IT BELOW LATER
         if args.udp==False: 
-            udpScan.udpScan(ip_address)
+            udpScan.udpScan(ip)
         
         results = return_dict[ip]
         lines = results.split(b"\n")
@@ -86,36 +87,36 @@ if __name__=='__main__':
             if re.search(r"http[^s]", serv):
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(httpEnum.httpEnum, ip_address, port)
+                    multProc(httpEnum.httpEnum, ip, port)
             elif re.search(r"https|ssl", serv):
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(httpsEnum.httpsEnum, ip_address, port)
+                    multProc(httpsEnum.httpsEnum, ip, port)
             elif "smtp" in serv:
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(smtpEnum.smtpEnum, ip_address, port)
+                    multProc(smtpEnum.smtpEnum, ip, port)
             elif "ftp" in serv:
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(ftpEnum.ftpEnum, ip_address, port)
+                    multProc(ftpEnum.ftpEnum, ip, port)
             elif ("microsoft-ds" in serv) or ("netbios-ssn" == serv):
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(smbEnum.smbEnum, ip_address, port)
-                    multProc(smbNmap.smbNmap, ip_address, port)
+                    multProc(smbEnum.smbEnum, ip, port)
+                    multProc(smbNmap.smbNmap, ip, port)
             elif "ms-sql" in serv:
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(mssqlEnum.mssqlEnum, ip_address, port)
+                    multProc(mssqlEnum.mssqlEnum, ip, port)
             elif "ssh" in serv:
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(sshScan.sshScan, ip_address, port)
+                    multProc(sshScan.sshScan, ip, port)
             # this snmp doesnt even exist
             elif "snmp" in serv:
                 for port in ports:
                     port = port.split("/")[0]
-                    multProc(snmpEnum.snmpEnum, ip_address, port)
+                    multProc(snmpEnum.snmpEnum, ip, port)
 
 
