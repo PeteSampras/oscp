@@ -38,18 +38,12 @@ def configure_scan(parser):
                         help='Finds DNS information about a target')
     parser_dig.set_defaults(func=dig_func)
 
+
     # create folders for parses
     args= parser.parse_args()
     for each in args.ip:
         create_folder(args.ip)
     return
-
-    # run functions?
-    # parser.func(args)
-
-    # parser_pingsweep = subparsers.add_parser('pingsweep',help='Perform network pingsweep')
-    # parser_pingsweep.add_argument('ip',nargs=1,help='Target IP address')
-    # parser_pingsweep.set_defaults(func=pingsweep)
 
 def create_folder(targets):
     # see what needs created.
@@ -61,7 +55,6 @@ def create_folder(targets):
             subprocess.check_output("mkdir ../reports/" + scanip, shell=True)
             subprocess.check_output("mkdir ../reports/" + scanip + "/exploits", shell=True)
             subprocess.check_output("mkdir ../reports/" + scanip + "/privesc", shell=True)
-            subprocess.check_output("mkdir ../reports/" + scanip + "/ftp_files", shell=True)
             print(bcolors.OKGREEN + "INFO: Folder created here: " + "../reports/" + scanip + bcolors.ENDC)
             subprocess.check_output("cp ../templates/windows-template.md ../reports/" + scanip + "/mapping-windows.md", shell=True)
             subprocess.check_output("cp ../templates/linux-template.md ../reports/" + scanip + "/mapping-linux.md", shell=True)

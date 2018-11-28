@@ -25,7 +25,7 @@ import modules.udpScan as udpScan
 
 start = time.time()
 
-if __name__=='__main__':
+def main():
     if len(sys.argv) < 2: # no args passed, print help and exit
         function = str(sys.argv[0])
         subprocess.call('python', '{}', '-h'.format(function))
@@ -120,3 +120,10 @@ if __name__=='__main__':
                     multProc(snmpEnum.snmpEnum, ip, port)
 
 
+if __name__=='__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Keyboard interrupted")
+    finally:
+        sys.exit()

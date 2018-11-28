@@ -15,6 +15,11 @@ def ftpEnum(ip_address, port):
     ftp = FTP(ip_address)
     ftp.login()
     ftp_files = ftp.nlst()
+    if len(ftp_files)>1:
+        try:
+            subprocess.check_output("mkdir ../reports/" + ip_address + "/ftp_files", shell=True)
+        except:
+            pass
     for files in ftp_files:
         print("Downloading..."+ files)
         ftp.retrbinary("RETR "+files,open("../reports/" + ip_address + "/ftp_files/"+files,'wb').write)
