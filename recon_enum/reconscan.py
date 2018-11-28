@@ -22,6 +22,7 @@ import modules.smbNmap as smbNmap
 import modules.smtpEnum as smtpEnum
 import modules.sshScan as sshScan
 import modules.udpScan as udpScan
+import modules.whois as whois
 
 start = time.time()
 
@@ -44,7 +45,10 @@ def main():
     return_dict={}
     # now we perform scans
     for ip in args.ip:
-        # do a dig first regardless of mode
+        # do a whois for some passive lookup
+        p = multiprocessing.Process(target=whois.whois, args=(ip,))
+        p.start()
+        # now do a dig for some more passive lookup
         p = multiprocessing.Process(target=dig.dig, args=(ip,))
         p.start()
         # now do the appropriate nmap for mode type

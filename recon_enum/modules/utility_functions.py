@@ -81,7 +81,7 @@ def write_to_file(ip_address,enum_type,data):
     print(bcolors.OKGREEN + "INFO: Writing " + enum_type + " to template files:\n " + file_path_linux + "   \n" + file_path_windows + bcolors.ENDC)
     for path in paths:
         if enum_type=="whois":
-            replace_file(path,INSERTWHOISSCAN,data)
+            replace_file(path,"INSERTWHOISSCAN",data)
         if enum_type == "portscan":
             replace_file(path,"INSERTTCPSCAN",data)
             #new = data.decode('UTF-8').strip()

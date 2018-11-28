@@ -22,7 +22,10 @@ def ftpEnum(ip_address, port):
             pass
     for files in ftp_files:
         print("Downloading..."+ files)
-        ftp.retrbinary("RETR "+files,open("../reports/" + ip_address + "/ftp_files/"+files,'wb').write)
+        try:
+            ftp.retrbinary("RETR "+files,open("../reports/" + ip_address + "/ftp_files/"+files,'wb').write)
+        except:
+            pass
         ftp.close()
 
     #FTPGET = "wget ftp://%s:21/ -o '../reports/%s/ftp_%s.html'" % (ip_address, port, ip_address, ip_address)

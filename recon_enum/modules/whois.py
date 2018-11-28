@@ -1,11 +1,11 @@
 import subprocess
 from modules.utility_functions import *
 
-def dig(ip_address):
-    print(bcolors.HEADER + "INFO: Starting dig scan for " + ip_address + bcolors.ENDC)
+def whois(ip_address):
+    print(bcolors.HEADER + "INFO: Starting whois for " + ip_address + bcolors.ENDC)
     WHOISSCAN = "whois " + ip_address
     print(bcolors.HEADER + WHOISSCAN + bcolors.ENDC)
-    results_whois = subprocess.check_output(DIGSCAN, shell=True)
+    results_whois = subprocess.check_output(WHOISSCAN, shell=True)
     print(bcolors.OKGREEN + "INFO: RESULT BELOW - Finished with whois request for " + ip_address + bcolors.ENDC)
     this=results_whois.decode().replace("<<-","")
     print(this)
